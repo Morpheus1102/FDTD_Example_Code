@@ -8,7 +8,7 @@ epsilon = 1  # Permittivity
 mu = 1  # Permeability
 
 # Grid parameters
-nx, ny = 100, 100  # Number of cells
+nx, ny = 100 , 100  # Number of cells
 dx, dy = 1, 1  # Cell size
 dt = dx / (2 * c)  # Time step
 
@@ -19,7 +19,7 @@ Hz = np.zeros((nx, ny))
 
 # Simulation parameters
 nt = 1000  # Number of time steps
-source_position_x, source_position_y = nx // 2, ny // 2  # Position of the source
+source_position_x, source_position_y = nx // 2 + nx // 3, ny // 2 + ny // 3  # Position of the source
 
 # Create a writer object
 with imageio.get_writer('2d_fdtd_simulation.gif', mode='I') as writer:
@@ -40,10 +40,10 @@ with imageio.get_writer('2d_fdtd_simulation.gif', mode='I') as writer:
                 Ex[i, j] += (Hz[i, j] - Hz[i, j - 1]) * dt / (epsilon * dy)
                 Ey[i, j] -= (Hz[i, j] - Hz[i - 1, j]) * dt / (epsilon * dx)
 
-        # Optional: plot the electric field at each time step
+        # Plot the electric field at each time step
         if t % 10 == 0:
             plt.figure(figsize=(8, 6))
-            plt.imshow(np.sqrt(Ex ** 2 + Ey ** 2), cmap='viridis')
+            plt.imshow(np.sqrt(Ex ** 2 + Ey ** 2), cmap='viridis', vmin=0, vmax=0.04)
             plt.colorbar(label='Electric Field Magnitude', fraction=0.046, pad=0.04)
             plt.title('2D FDTD at t = ' + str(t))
             plt.axis('off') # Remove axes

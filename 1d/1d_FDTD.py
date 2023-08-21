@@ -36,7 +36,7 @@ with imageio.get_writer('1d_fdtd_simulation.gif', mode='I') as writer:
         for i in range(1, nx):
             Ex[i] += (Hy[i] - Hy[i - 1]) * dt / (epsilon * dx)
 
-        # Optional: plot the electric field at each time step
+        # Plot the electric field at each time step
         if t % 10 == 0:
             plt.plot(Ex)
             plt.xlabel('Grid Index')
@@ -48,3 +48,4 @@ with imageio.get_writer('1d_fdtd_simulation.gif', mode='I') as writer:
             plt.savefig('temp.png')
             writer.append_data(imageio.imread('temp.png'))
             plt.close()
+            
