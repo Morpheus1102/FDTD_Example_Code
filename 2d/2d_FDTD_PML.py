@@ -69,15 +69,6 @@ source_position_x, source_position_y = xdim // 2 , ydim // 2 # Position of the s
 with imageio.get_writer('2d_fdtd_pml_simulation.gif', mode='I') as writer:
     for t in range(nt):
 
-        # Gaussian source
-        source = 3 * np.exp(-0.5 * ((t - 30) / 10) ** 2)
-        Ezx[source_position_x, source_position_y] += source
-        Ezy[source_position_x, source_position_y] += source
-
-        # if n <= 3:
-        #     Ezx[source_position_x, source_position_y] = 0.5
-        #     Ezy[source_position_x, source_position_y] = 0.5
-
         n1 = max(source_position_x - t - 1, 0)
         n2 = min(source_position_x + t, xdim - 1)
         n11 = max(source_position_y - t - 1, 0)
@@ -85,6 +76,11 @@ with imageio.get_writer('2d_fdtd_pml_simulation.gif', mode='I') as writer:
 
         Hy[n1:n2, n11:n21] = A[n1:n2, n11:n21] * Hy[n1:n2, n11:n21] + B[n1:n2, n11:n21] * (Ezx[n1+1:n2+1, n11:n21] - Ezx[n1:n2, n11:n21] + Ezy[n1+1:n2+1, n11:n21] - Ezy[n1:n2, n11:n21])
         Hx[n1:n2, n11:n21] = G[n1:n2, n11:n21] * Hx[n1:n2, n11:n21] - H[n1:n2, n11:n21] * (Ezx[n1:n2, n11+1:n21+1] - Ezx[n1:n2, n11:n21] + Ezy[n1:n2, n11+1:n21+1] - Ezy[n1:n2, n11:n21])
+
+        # Gaussian source
+        source = 3 * np.exp(-0.5 * ((t - 30) / 10) ** 2)
+        Ezx[source_position_x, source_position_y] += source
+        Ezy[source_position_x, source_position_y] += source
 
         Ezx[n1+1:n2+1, n11+1:n21+1] = C[n1+1:n2+1, n11+1:n21+1] * Ezx[n1+1:n2+1, n11+1:n21+1] + D[n1+1:n2+1, n11+1:n21+1] * (-Hx[n1+1:n2+1, n11+1:n21+1] + Hx[n1+1:n2+1, n11:n21])
         Ezy[n1+1:n2+1, n11+1:n21+1] = E[n1+1:n2+1, n11+1:n21+1] * Ezy[n1+1:n2+1, n11+1:n21+1] + F[n1+1:n2+1, n11+1:n21+1] * (Hy[n1+1:n2+1, n11+1:n21+1] - Hy[n1:n2, n11+1:n21+1])
@@ -97,7 +93,7 @@ with imageio.get_writer('2d_fdtd_pml_simulation.gif', mode='I') as writer:
             plt.imshow(Ez.T, cmap='viridis', vmin=0, vmax=0.03)
             plt.colorbar(label='Electric Field Magnitude', fraction=0.046, pad=0.04)
             plt.title('2D FDTD with PML at t = ' + str(t))
-            plt.axis('off')  # Remove axes
+            plt.axis('off')
 
             # Convert plot to image and append to GIF
             plt.savefig('temp.png', bbox_inches='tight', pad_inches=0)

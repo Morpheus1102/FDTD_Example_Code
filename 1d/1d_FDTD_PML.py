@@ -45,12 +45,13 @@ source_position = xdim // 2
 
 with imageio.get_writer('1d_fdtd_pml_simulation.gif', mode='I') as writer:
     for t in range(nt):
-        # Gaussian source
-        source = np.exp(-0.5 * ((t - 30) / 10) ** 2)
-        Ez[source_position] += source
 
         # Update magnetic field
         Hy[:xdim - 1] = C[:xdim - 1] * Hy[:xdim - 1] + D[:xdim - 1] * (Ez[1:xdim] - Ez[:xdim - 1])
+
+        # Gaussian source
+        source = np.exp(-0.5 * ((t - 30) / 10) ** 2)
+        Ez[source_position] += source
 
         # Update electric field
         Ez[1:xdim] = A[1:xdim] * Ez[1:xdim] + B[1:xdim] * (Hy[1:xdim] - Hy[:xdim - 1])
