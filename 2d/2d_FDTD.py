@@ -48,10 +48,10 @@ with imageio.get_writer('2d_fdtd_simulation.gif', mode='I') as writer:
         # Hz[source_position_x, source_position_y] += source
 
         # Update E fields
-        for i in range(1, nx):
-            for j in range(1, ny):
-                Ex[i, j] += (Hz[i, j] - Hz[i, j - 1]) * dt / (epsilon * dy)
-                Ey[i, j] -= (Hz[i, j] - Hz[i - 1, j]) * dt / (epsilon * dx)
+        # for i in range(1, nx):
+        #     for j in range(1, ny):
+        #         Ex[i, j] += (Hz[i, j] - Hz[i, j - 1]) * dt / (epsilon * dy)
+        #         Ey[i, j] -= (Hz[i, j] - Hz[i - 1, j]) * dt / (epsilon * dx)
 
         # Plot the electric field at each time step
         if t % 10 == 0:
