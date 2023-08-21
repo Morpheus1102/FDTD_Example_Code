@@ -18,21 +18,34 @@ Ey = np.zeros((nx, ny))
 Hz = np.zeros((nx, ny))
 
 # Simulation parameters
-nt = 1000  # Number of time steps
+nt = 500  # Number of time steps
 source_position_x, source_position_y = nx // 2 + nx // 3, ny // 2 + ny // 3  # Position of the source
 
 # Create a writer object
 with imageio.get_writer('2d_fdtd_simulation.gif', mode='I') as writer:
     # Main FDTD loop
     for t in range(nt):
-        # Update H field
-        for i in range(nx - 1):
-            for j in range(ny - 1):
-                Hz[i, j] += (Ex[i, j + 1] - Ex[i, j] - Ey[i + 1, j] + Ey[i, j]) * dt / (mu * dx)
+        # Update H field using vectorized operation
+        Hz[:-1, :-1] += (Ex[:-1, 1:] - Ex[:-1, :-1] - Ey[1:, :-1] + Ey[:-1, :-1]) * dt / (mu * dx)
 
         # Gaussian source
         source = np.exp(-0.5 * ((t - 30) / 10) ** 2)
         Hz[source_position_x, source_position_y] += source
+
+        # Update E fields using vectorized operation
+        Ex[1:, 1:] += (Hz[1:, 1:] - Hz[1:, :-1]) * dt / (epsilon * dy)
+        Ey[1:, 1:] -= (Hz[1:, 1:] - Hz[:-1, 1:]) * dt / (epsilon * dx)
+
+        # As same as the following code
+
+        # Update H field
+        # for i in range(nx - 1):
+        #     for j in range(ny - 1):
+        #         Hz[i, j] += (Ex[i, j + 1] - Ex[i, j] - Ey[i + 1, j] + Ey[i, j]) * dt / (mu * dx)
+
+        # Gaussian source
+        # source = np.exp(-0.5 * ((t - 30) / 10) ** 2)
+        # Hz[source_position_x, source_position_y] += source
 
         # Update E fields
         for i in range(1, nx):

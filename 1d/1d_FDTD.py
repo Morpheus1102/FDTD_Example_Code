@@ -25,12 +25,24 @@ with imageio.get_writer('1d_fdtd_simulation.gif', mode='I') as writer:
     # Main FDTD loop
     for t in range(nt):
         # Update magnetic field
-        for i in range(nx - 1):
-            Hy[i] += (Ex[i + 1] - Ex[i]) * dt / (mu * dx)
+        Hy[:nx - 1] += (Ex[1:nx] - Ex[:nx - 1]) * dt / (mu * dx)
 
         # Gaussian source
         source = np.exp(-0.5 * ((t - 30) / 10) ** 2)
         Hy[source_position] += source
+
+        # Update electric field
+        Ex[1:nx] += (Hy[1:nx] - Hy[:nx - 1]) * dt / (epsilon * dx)
+
+        # As same as the following code
+
+        # Update magnetic field
+        # for i in range(nx - 1):
+        #     Hy[i] += (Ex[i + 1] - Ex[i]) * dt / (mu * dx)
+
+        # Gaussian source
+        # source = np.exp(-0.5 * ((t - 30) / 10) ** 2)
+        # Hy[source_position] += source
 
         # Update electric field
         for i in range(1, nx):
@@ -48,4 +60,3 @@ with imageio.get_writer('1d_fdtd_simulation.gif', mode='I') as writer:
             plt.savefig('temp.png')
             writer.append_data(imageio.imread('temp.png'))
             plt.close()
-            
